@@ -18,12 +18,14 @@ static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
-static char selbordercolor[]        = "#FF8C00";
-static char selbgcolor[]            = "#FF8C00";
+static char selbordercolor[]        = "#581845";
+static char selbgcolor[]            = "#581845";
+
+#include "themes/catppuccin.h"
 static char *colors[][3] = {
        /*               fg           bg           border   */
-       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
-       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+         [SchemeNorm]       = { "#fff",   black,  gray2 },
+    	[SchemeSel]        = { gray4,   blue,   blue  },
 };
 
 /* tagging */
@@ -88,6 +90,8 @@ static const char *brdowncmd[] = { "sudo", "xbacklight", "-dec", "10", NULL };
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
+	{ MODKEY,                       XK_x,      spawn,        SHCMD("slock") },
+	{ 0,                       XK_Print,      spawn,        SHCMD("flameshot gui") },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
@@ -95,10 +99,11 @@ static Key keys[] = {
 	{ MODKEY,                       XK_f,	   zoom,           {0} },
 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_s,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_p,      spawn,      SHCMD("xrandr --output DisplayPort-0 --mode 1920x1080 --rate 165;xrandr --output eDP --off") },
+	{ MODKEY,                       XK_m,      spawn,      SHCMD("xrandr --output DisplayPort-0 --mode 1920x1080 --rate 165;xrandr --output eDP --off") },
+	{ MODKEY,                       XK_n,      spawn,      SHCMD("xrandr --output eDP --mode 1920x1080") },
 	{ MODKEY,		        XK_q,      killclient,     {0} },
 	{ MODKEY,                       XK_w,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_e,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_e,      spawn,      SHCMD("thunar") },
 	{ MODKEY|ShiftMask,             XK_r,  	   togglefloating, {0} },
 	{ MODKEY,                       XK_t,  	   setlayout,      {0} },
 	{ MODKEY,                       XK_r,  spawn,          {.v = dmenucmd } },
