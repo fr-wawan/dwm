@@ -18,12 +18,14 @@ static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
-static char selbordercolor[]        = "#FF8C00";
-static char selbgcolor[]            = "#FF8C00";
+static char selbordercolor[]        = "#581845";
+static char selbgcolor[]            = "#581845";
+
+#include "themes/catppuccin.h"
 static char *colors[][3] = {
        /*               fg           bg           border   */
-       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
-       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
+         [SchemeNorm]       = { "#fff",   black,  gray2 },
+    	[SchemeSel]        = { gray4,   blue,   blue  },
 };
 
 /* tagging */
@@ -37,11 +39,11 @@ static const Rule rules[] = {
 	/* class                instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
 	{ "obs",                NULL,     NULL,           0,         1,          0,           0,        -1 },
 	{ "firefox",   		NULL,     NULL,           1 << 2,    0,          0,          -1,        -1 },
-	{ "Code",   		NULL,     NULL,           1 << 2,    0,          0,          -1,        -1 },
-	{ "discord",   		NULL,     NULL,           1 << 5,    0,          0,          -1,        -1 },
-	{ "Spotify",   		NULL,     NULL,           1 << 6,    0,          0,          -1,        -1 },
-	{ "DBeaver",   		NULL,     NULL,           1 << 6,    0,          0,          -1,        -1 },
-	{ "Github Desktop",   		NULL,     NULL,           1 << 6,    0,          0,          -1,        -1 },
+	{ "Code",   		NULL,     NULL,           1 << 1,    0,          0,          -1,        -1 },
+	{ "discord",   		NULL,     NULL,           1 << 3,    0,          0,          -1,        -1 },
+	{ "Spotify",   		NULL,     NULL,           1 << 4,    0,          0,          -1,        -1 },
+	{ "DBeaver",   		NULL,     NULL,           1 << 4,    0,          0,          -1,        -1 },
+	{ "GitHub Desktop",   		NULL,     NULL,           1 << 4,    0,          0,          -1,        -1 },
 	{ "St",                 NULL,     NULL,           0,         0,          1,           0,        -1 },
 	{ NULL,                 NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
@@ -74,9 +76,22 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", NULL};
 static const char *termcmd[]  = { "st", NULL };
 
+/* Volume */
+static const char *mutecmd[] = { "pactl", "set-sink-mute", "0", "toggle", NULL };
+static const char *volupcmd[] = { "pactl", "set-sink-volume", "0", "+5%", NULL };
+static const char *voldowncmd[] = { "pactl", "set-sink-volume", "0", "-5%", NULL };
+
+/* Brightness */
+static const char *brupcmd[] = { "sudo", "xbacklight", "-inc", "10", NULL };
+static const char *brdowncmd[] = { "sudo", "xbacklight", "-dec", "10", NULL };
+
+#include <X11/XF86keysym.h>
+
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
+	{ MODKEY,                       XK_x,      spawn,        SHCMD("slock") },
+	{ 0,                       XK_Print,      spawn,        SHCMD("flameshot gui") },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
@@ -84,10 +99,12 @@ static Key keys[] = {
 	{ MODKEY,                       XK_f,	   zoom,           {0} },
 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_s,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_p,      spawn,      SHCMD("xrandr --output DisplayPort-0 --mode 1920x1080 --rate 165;xrandr --output eDP --off") },
+	{ MODKEY,                       XK_m,      spawn,      SHCMD("xrandr --output DisplayPort-0 --mode 1920x1080 --rate 165;xrandr --output eDP --off") },
+	{ MODKEY,                       XK_n,      spawn,      SHCMD("xrandr --output eDP --mode 1920x1080") },
 	{ MODKEY,		        XK_q,      killclient,     {0} },
 	{ MODKEY,                       XK_w,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_e,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY|ShiftMask,             XK_f,      fullscreen,     {0} },
+	{ MODKEY,                       XK_e,      spawn,      SHCMD("thunar") },
 	{ MODKEY|ShiftMask,             XK_r,  	   togglefloating, {0} },
 	{ MODKEY,                       XK_t,  	   setlayout,      {0} },
 	{ MODKEY,                       XK_r,  spawn,          {.v = dmenucmd } },
@@ -99,6 +116,11 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+	{ 0, XF86XK_AudioMute, spawn, {.v = mutecmd } },
+	{ 0, XF86XK_AudioLowerVolume, spawn, {.v = voldowncmd } },
+	{ 0, XF86XK_AudioRaiseVolume, spawn, {.v = volupcmd } },
+	{ 0, XF86XK_MonBrightnessUp, spawn, {.v = brupcmd} },
+	{ 0, XF86XK_MonBrightnessDown, spawn, {.v = brdowncmd} },
 	{ MODKEY,			XK_minus,  setgaps,	   {.i = -1 } },
 	{ MODKEY,			XK_equal,  setgaps,	   {.i = +1 } },
 	{ MODKEY|ShiftMask,		XK_equal,  setgaps,	   {.i =  0 } },

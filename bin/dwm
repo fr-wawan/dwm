@@ -1,0 +1,6 @@
+#!/bin/sh
+
+dwmblocks &
+feh --bg-scale $HOME/Pictures/wallpaper.png;picom --config $HOME/.config/picom/picom.conf &
+flameshot &
+exec dwm
