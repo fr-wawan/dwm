@@ -1,6 +1,10 @@
 #!/bin/sh
 
+wal=$(find ~/Pictures/nord-wallpaper/ -type f -name "*.jpg" -o -name "*.png" | shuf -n 1)
+
 dwmblocks &
-feh --bg-scale $HOME/Pictures/wallpaper.png;picom --config $HOME/.config/picom/picom.conf &
+feh --bg-scale $wal; xcompmgr &
 flameshot &
 exec dwm
+~
+
