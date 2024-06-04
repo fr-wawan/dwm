@@ -3,7 +3,7 @@
 wal=$(find ~/Pictures/nord-wallpaper/ -type f -name "*.jpg" -o -name "*.png" | shuf -n 1)
 
 dwmblocks &
-feh --bg-scale $wal; xcompmgr &
+feh --bg-scale $wal &
 flameshot &
 exec dwm
 ~
